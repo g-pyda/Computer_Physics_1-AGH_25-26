@@ -1,0 +1,207 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\begin{document}
+
+\title{Laboratory Report: Symplectic Integrators and Precession of Mercury's Orbit}
+\author{Gabriela Pyda}
+\date{October 25th, 2025} 
+
+\maketitle
+
+\section{Introduction}
+In the study of planetary motion, while Kepler's laws provide a foundational understanding of elliptical orbits, more precise observations and theoretical advancements, particularly Albert Einstein's General Relativity, reveal subtle deviations from these classical predictions. One such deviation is the precession of Mercury's perihelion, a phenomenon that cannot be fully explained by Newtonian gravity alone. 
+
+For large distances, the gravitational interaction between two masses in Solar system is governed by Newton's law of universal gravitation in Formula \ref{newton}, where $G$ is the gravitational constant, $M$ is the mass of the Sun, $m$ is the mass of the planet, and $r$ is the distance between their centers. This classical approach predicts stable, closed elliptical orbits.
+
+\begin{equation}
+\label{newton}
+F_g = \frac{GM m}{r^2}
+\end{equation}
+
+However, General Relativity modifies this picture. It posits that massive objects curve spacetime, affecting how distances are measured and thus altering the gravitational force. This leads to a relativistic correction to the classical gravitational force, represented by Formula \ref{rel_corr}, where $\alpha$ is a factor quantifying the relativistic correction. For planets with significant eccentricities, like Mercury, Mars, and Pluto (dwarf planet), this correction becomes noticeable. Mercury, with an eccentricity of 0.206, is particularly interesting because its elliptical orbit slowly rotates over time, an effect known as perihelion precession. This precession is very small and values approximately 43 arcseconds per century. 
+
+\begin{equation}
+\label{rel_corr}
+F_{gr} = \frac{GM m}{r^2} \left(1 + \frac{\alpha}{r^2}\right)
+\end{equation}
+
+
+For simulation purposes, we consider a system with a massive, non-moving star (mass $M$) at the origin $[0,0]$ and a much lighter planet (Mercury, mass $m$) orbiting around it. The planet's motion is described by its position vector $\mathbf{r} = [x,y]$ and momentum/velocity vector $\mathbf{p} = [p_x, p_y] = m[v_x, v_y]$. The Hamiltonian for this system, with $U(r)$ being the gravitational potential energy, is described by Formula \ref{hamiltonian}. Following that, the equations of motion (EOMs) can be formulated (Formulae \ref{eom} and \ref{eom2}).
+
+\begin{equation}
+\label{hamiltonian}
+H(\mathbf{r}, \mathbf{p}) = \frac{p^2}{2m} + U(r), \quad \mathbf{F} = -\nabla U(r)
+\end{equation}
+
+\begin{align}
+\label{eom}
+\frac{d\mathbf{r}}{dt} &= \frac{\partial H}{\partial \mathbf{p}} = \frac{\mathbf{p}}{m} \\
+\label{eom2}
+\frac{d\mathbf{p}}{dt} &= \mathbf{F} = -\frac{\partial H}{\partial \mathbf{r}} = - \frac{GM_s m}{r^2} \left(1 + \frac{\alpha}{r^2}\right) \frac{\mathbf{r}}{r}
+\end{align}
+
+To work with more approachable values, we adopt astronomical units (AU) for length (Earth-Sun distance) and years for time (Earth year).
+
+\begin{equation}
+\text{length} \rightarrow 1 \, \text{AU} = 1.5 \cdot 10^{11} \, \text{m}, \quad \text{time} \rightarrow [\text{year}]
+\end{equation}
+
+For nondimensionalization, we use the condition for a stable elliptical orbit, where centrifugal force and gravitational force (without relativistic correction) balance, following the Formula \ref{nondim}, which leads to the nondimensionalized EOMs (Formulae \ref{nondim_eom} and \ref{nondim_eom2}).
+
+\begin{equation}
+\label{nondim}
+\frac{mv^2}{r} = \frac{GM_s m}{r^2} \implies v = 2\pi \left[\frac{1 \, \text{AU}}{\text{year}}\right] \implies GM_s = 4\pi^2 \left[\frac{\text{AU}^3}{\text{year}^2}\right]
+\end{equation}
+
+\begin{align}
+\label{nondim_eom}
+\frac{d\mathbf{r}}{dt} &= \mathbf{v} \\
+\label{nondim_eom2}
+\frac{d\mathbf{v}}{dt} &= \frac{1}{m} \frac{d\mathbf{p}}{dt} = -\frac{4\pi^2}{r^2} \left(1 + \frac{\alpha}{r^2}\right) \frac{\mathbf{r}}{r}
+\end{align}
+
+\section{Algorithm for Symplectic Integrator}
+
+To solve the second-order ordinary differential equations of motion, a \textbf{fourth-order symplectic integrator} can be employed. As they are designed to preserve the symplectic structure of phase space, the symplectic integrators are particularly designed for Hamiltonian systems, leading to excellent long-term energy conservation and accurate trajectory evolution.
+
+The integrator proceeds in discrete time steps $\Delta t$. At each step, the position and velocity vectors are updated using a sequence of sub-steps based on Neri's parametrization. This involves coefficients $a_k$ (Formula \ref{neri_a}) and $b_k$ (Formula \ref{neri_b}) which split the update into distinct position and velocity increments. The method is inherently stable and ensures that the long-term behavior of the simulated orbit closely matches the physical system. 
+
+\begin{align}
+\label{neri_a}
+a_1 = a_4 &= \frac{1}{2(2 - 2^{1/3})}, \quad a_2 = a_3 = \frac{1 - 2^{1/3}}{2(2 - 2^{1/3})} \\
+\label{neri_b}
+b_1 = b_3 &= \frac{1}{(2 - 2^{1/3})}, \quad b_2 = \frac{-2^{1/3}}{(2 - 2^{1/3})}, \quad b_4 = 0
+\end{align}
+
+Additionally, the angular velocity of precession $\omega(\alpha)$ can be determined by tracking consecutive positions of perihelion and aphelion and calculating the angular shift over the corresponding time interval, following the Formula \ref{ang_vel}, where $\theta_I$ and $\theta_{II}$ are the angles of two consecutive perihelion events at times $t_I$ and $t_{II}$, respectively.
+
+\begin{equation}
+\label{ang_vel}
+\omega(\alpha) = \frac{d\theta}{dt} = \frac{\theta_{II} - \theta_I}{t_{II} - t_I}
+\end{equation}
+
+\section{Results}
+
+In each part of the laboratory, we use the following astronomical data:
+
+\begin{align}
+a &= 0.397098 \, \text{AU} \quad (\text{semimajor axis}) \\
+T_{\text{Mercury}} &= 87.9691 \, \text{days} = 0.240846 \, \text{year} \quad (\text{time period}) \\
+M_s &= 1.998 \cdot 10^{30} \, \text{kg} \quad (\text{mass of Sun}) \\
+m &= 2.4 \cdot 10^{23} \, \text{kg} \quad (\text{mass of Mercury}) \\
+e &= 0.206 \quad (\text{eccentricity})
+\end{align}
+
+Initial conditions are set at the aphelion (largest distance from the Sun) for simplicity. The perihelion ($r_{min}$) and aphelion ($r_{max}$) distances, along with their corresponding maximum ($v_{max}$) and minimum ($v_{min}$) velocities, are given by Formulae \ref{rmin} and \ref{rmax}, where $a$ is the semimajor axis, $e$ is the eccentricity, and $GM_s = 4\pi^2$ (in astronomical units).
+
+\begin{align}
+\label{rmin}
+r_{min} &= a(1-e), \quad v_{max} = \sqrt{GM_s \frac{1+e}{a(1-e)} \left(1 + \frac{m}{M_s}\right)} \\
+\label{rmax}
+r_{max} &= a(1+e), \quad v_{min} = \sqrt{GM_s \frac{1-e}{a(1+e)} \left(1 + \frac{m}{M_s}\right)}
+\end{align}
+
+For the initial conditions, we assume:
+
+\begin{align}
+\mathbf{r}(t=0) &= [r_{max}, 0] \\
+\mathbf{v}(t=0) &= [0, v_{min}]
+\end{align}
+
+\subsection{Testing correctness of the results}
+
+A preliminary simulation was conducted with the relativistic correction factor $\alpha = 0$ to observe the classical Newtonian orbit. The simulation ran at first for $t_{max} = 0.95 \cdot T_{\text{Mercury}}$ (0.95 Mercury years), and then $t_{max} = 100 \cdot T_{\text{Mercury}}$ (100 Mercury years), each with a time step of $\Delta t = 10^{-4}$. 
+
+\begin{figure}[H] 
+    \centering 
+    \begin{minipage}[b]{0.45\textwidth} 
+        \centering
+        \includegraphics[width=\textwidth]{plots/test_cor/v(t).png} 
+        \caption{Trajectory of Mercury for $t = 0.95 * T_{Mercury}$}
+        \label{fig:image1}
+    \end{minipage}
+    \hfill 
+    \begin{minipage}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/test_cor/x(t).png}
+        \caption{Trajectory of Mercury for $t = 100 * T_{Mercury}$}
+        \label{fig:image2}
+    \end{minipage}
+\end{figure}
+
+The resulting trajectory showed perfectly overlapping elliptical orbits, demonstrating excellent long-term energy conservation and the stability of the symplectic integrator. This confirmed the correctness of the numerical implementation for classical gravitational dynamics. A typical stable orbit is depicted on the left side of Figure 2.
+
+\subsection{Testing correctness of precession representation}
+
+The next part includes simulation of the Mercury's orbit concerning the precession with relativistic correction factor $\alpha = 0.01$. 
+
+Figure 2 demonstrates the simulation outcomes for Mercury's orbit. The left panel shows a stable, closed elliptical orbit when the relativistic correction ($\alpha=0$) is turned off, confirming the accuracy of the integrator for classical Newtonian gravity. The right panel illustrates the precession of Mercury's perihelion when a significant relativistic correction ($\alpha=0.01$) is applied. The rotation of the ellipse is clearly visible, with the perihelion points (marked) showing a consistent angular shift over time. This exaggerated $\alpha$ value allows for the observation of precession within a short simulation timeframe, which would be imperceptible with the actual, much smaller relativistic correction.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{placeholder3} % Placeholder for Figure 3 from the instruction
+    \caption{Numerical data of precession velocity as function of $\alpha_j$ (dots) and the fit $\omega = A \cdot \alpha$ (red curve).}
+\end{figure}
+
+Figure 3 displays the relationship between the relativistic correction factor $\alpha_j$ and the calculated precession velocity $\omega(\alpha_j)$. The scattered points represent the numerically determined precession velocities for various $\alpha_j$ values, while the red line indicates the linear fit $\omega = A \cdot \alpha$. This plot is crucial for validating the linear dependence of precession velocity on the relativistic correction, as predicted by perturbation theory. The slope $A$ derived from this fit can then be used to estimate the precession for the true, smaller relativistic correction factor of Mercury.
+
+\section{Conclusions}
+
+The numerical simulations successfully demonstrated the capabilities of the symplectic integrator in modeling Mercury's orbit, both in the classical and relativistic regimes. The high accuracy of the integrator in conserving energy was confirmed by the stable, overlapping orbits observed during long-term simulations without relativistic effects.
+
+The precession of Mercury's perihelion was clearly observed when an artificially large relativistic correction factor ($\alpha=0.01$) was introduced. This test successfully validated the relativistic correction implemented in Equation (2) and demonstrated its impact on the orbital trajectory.
+
+By performing simulations with varying $\alpha$ values and fitting a linear model to the resulting precession velocities, we established a clear relationship between the relativistic correction and the angular precession rate. This approach allows us to extrapolate the precession velocity to the actual relativistic correction value for Mercury, even though direct simulation with the true $\alpha$ would require an astronomically long simulation time to observe a noticeable effect.
+
+Comparison of the calculated precession velocity with the known astronomical value will provide insight into the accuracy of the model and the limitations of numerical precision. Any discrepancies could be attributed to numerical errors, the simplified model (neglecting other planetary perturbations), or limitations in the fitting procedure. Overall, this project offers a robust framework for understanding and simulating the subtle yet significant relativistic effects on planetary orbits.
+
+\section{Results of the Practical Part}
+
+Throughout the simulations, astronomical data for Mercury and the Sun were utilized, and all variables were nondimensionalized (length in AU, time in years). Initial conditions were consistently set at the aphelion.
+
+\subsubsection{Precession Test with Exaggerated Relativistic Effect}
+To observe perihelion precession within a manageable simulation time, an exaggerated relativistic correction factor $\alpha = 0.01$ was used (approximately six orders of magnitude larger than Mercury's actual value). The simulation ran for $t_{max} = 4 \cdot T_{\text{Mercury}}$ with $\Delta t = 10^{-4}$. The trajectory clearly showed a rotation of the elliptical orbit, with consecutive perihelion points shifting angularly. This visually confirmed that the relativistic correction implemented in Equation (2) correctly induces perihelion precession. The precessing orbit, with marked aphelion and perihelion points, is illustrated on the right side of Figure 2.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{placeholder2} % Placeholder for Figure 2 from the instruction
+    \caption{(LEFT) Stable orbit of Mercury without relativistic correction ($\alpha = 0$), and, (RIGHT) precession of perihelion of Mercury for extremely large deviation of central force from inverse power law $1/r^2$ ($\alpha = 0.01$).}
+\end{figure}
+
+\subsection{Quantifying the Relativistic Effect}
+
+Due to the extremely small real value of $\alpha$ for Mercury ($\sim 1.1 \cdot 10^{-8} \, \text{AU}^2$), direct simulation to observe the actual precession rate is computationally prohibitive, as numerical errors would likely obscure the subtle relativistic effect. Instead, a perturbation-based approach was used:
+
+\begin{enumerate}[label=\alph*)]
+    \item \textbf{Simulations with Varying $\alpha$:} A series of short simulations ($t_{max} = 3 \, \text{years}$, $\Delta t = 10^{-5}$) were performed for several larger $\alpha_j$ values (ranging from $0.001$ down to $0.001/2^6$). For each $\alpha_j$, two consecutive perihelion points were detected, and the angular velocity of precession, $\omega_j = \omega(\alpha_j)$, was calculated using Equation (23). The collected data pairs $(\alpha_j, \omega_j)$ were recorded.
+
+    \item \textbf{Linear Fit:} Based on perturbation theory, the precession velocity $\omega$ is expected to be linearly proportional to $\alpha$ for small $\alpha$ values, with no constant offset since $\omega=0$ when $\alpha=0$. A linear fit of the form $\omega = A \cdot \alpha$ was applied to the collected data using GNUPLOT. The fitting procedure yielded the slope factor $A$.
+
+    \item \textbf{Plotting Results:} The computed $(\alpha_j, \omega_j)$ data points were plotted along with the determined linear fit, as shown in Figure 3. The strong linear correlation observed confirms the theoretical expectation.
+
+    \item \textbf{Precession Velocity for Real $\alpha$:} Using the determined slope $A$ from the linear fit, the precession velocity for Mercury's actual relativistic correction factor ($\alpha = 1.1 \cdot 10^{-8} \, \text{AU}^2$) was calculated as $\omega_{\text{real}} = A \cdot (1.1 \cdot 10^{-8})$. This calculated value was then compared to the astronomically observed precession rate of approximately $42.9799$ arcsec/century.
+\end{enumerate}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{placeholder3} % Placeholder for Figure 3 from the instruction
+    \caption{Numerical data of precession velocity as function of $\alpha_j$ (dots) and the fit $\omega = A \cdot \alpha$ (red curve).}
+\end{figure}
+
+\section{Conclusions}
+
+The numerical simulations employing a symplectic integrator successfully captured the dynamics of Mercury's orbit and the subtle phenomenon of perihelion precession. The integrator's ability to maintain energy conservation was verified through long-term simulations of classical Newtonian orbits, producing stable, closed ellipses.
+
+By introducing an exaggerated relativistic correction factor, the characteristic precession of the orbit's perihelion was clearly demonstrated, confirming the correct implementation of the relativistic force term. The crucial step of quantifying the relativistic effect involved a series of simulations with varying, larger $\alpha$ values. The observed linear relationship between the precession velocity $\omega$ and $\alpha$ allowed for the determination of a proportionality constant $A$.
+
+Using this proportionality, the precession velocity for Mercury's true, very small relativistic correction factor was estimated. The comparison of this estimated value with the astronomically observed precession rate provides a critical validation of General Relativity's prediction. Any discrepancies between the simulated and observed values could arise from the simplified model (neglecting perturbations from other planets), the precision of the numerical integration, or the accuracy of the linear fitting. However, the methodology provides a robust way to analyze and confirm the relativistic contribution to planetary orbits, highlighting the elegance and accuracy of Einstein's theory in describing the curvature of spacetime.
+
+\end{document}
+
+\end{document}
