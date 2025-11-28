@@ -16,8 +16,16 @@ void save_potential(
     std::ofstream error_file(dirname + "/err(x,y).dat");
     for (int y = 0; y < N; y++) {
         for (int x = 0; x < N; x++) {
-            potential_file << x * delta - L << " " << y * delta - L << " " << v[y][x] << std::endl;
-            error_file << x * delta - L << " " << y * delta - L << " " << (delta * delta * v[y][x]) + rho[y][x] << " " << (delta * delta * v[y][x]) << " " << rho[y][x]  << std::endl;
+            potential_file << x * delta - L << " " << y * delta - L << " " << v[y][x] << "\n";
+            
+            if (x > 0 && x < N-1 && y > 0 && y < N-1) {
+                double laplace_x = (v[y][x+1] - 2.0 * v[y][x] + v[y][x-1]) / (delta * delta);
+                double laplace_y = (v[y+1][x] - 2.0 * v[y][x] + v[y-1][x]) / (delta * delta);
+                double laplacian = laplace_x + laplace_y;
+                error_file << x * delta - L << " " << y * delta - L << " " << laplacian + rho[y][x] << "\n";
+            } else {
+                error_file << x * delta - L << " " << y * delta - L << " " << rho[y][x] << "\n";
+            }
         }
     }
     potential_file.close();
@@ -30,8 +38,14 @@ void save_SOR_iterations(
     double s,
     double delta_s
 ) {
-    std::ofstream SOR_iterations_file(dirname + "/SOR_iterations.dat", std::ios_base::app);
-    SOR_iterations_file << iter << " " << s << " " << delta_s << std::endl;
+    std::ofstream SOR_iterations_file;
+    if (iter == 1)
+        SOR_iterations_file.open(dirname + "/SOR_iterations.dat");
+    else
+        SOR_iterations_file.open(dirname + "/SOR_iterations.dat", std::ios_base::app);
+
+    SOR_iterations_file << iter << " " << s << " " << delta_s << "\n";
+
     SOR_iterations_file.close();
 }
 
@@ -87,29 +101,30 @@ void SOR(
     // dirichlet boundary conditions - if applicable
     if (Dirichlet_boundary == true) {
         for (int i = 0; i < N; i++) {
-            v[0][i] = sin(k4 * (i * delta) * M_PI / (2 * L));
-            v[N-1][i] = sin(k2 * (i * delta) * M_PI / (2 * L));
-            v[i][0] = sin(k1 * (i * delta) * M_PI / (2 * L));
-            v[i][N-1] = sin(k3 * (i * delta) * M_PI / (2 * L));
+            v[0][i] = sin((k4 * (i * delta) * M_PI) / (2 * L));
+            v[N-1][i] = sin((k2 * (i * delta) * M_PI) / (2 * L));
+            v[i][0] = sin((k1 * (i * delta) * M_PI) / (2 * L));
+            v[i][N-1] = sin((k3 * (i * delta) * M_PI) / (2 * L));
         }
     }
 
     // relaxation loop
     for (int k = 1; k <= Kmax; k++) {
-        std::cout << "SOR iteration: " << k << std::endl;
+        // std::cout << "SOR iteration: " << k << "\n";
         // Neumann boundary conditions - if applicable
-        if (Neumann_boundary == true)
+        if (Neumann_boundary)
             for (int i = 1; i < N-1; i++) 
                 v[i][N-1] = v[i][N-2];
         
         // upgrade of the solution
         for (int y = 1; y < N-1; y++)
             for (int x = 1; x < N-1; x++) 
-                v[y][x] = (1 - omega) * v[y][x] + (omega / 4.0) * (v[y+1][x] + v[y-1][x] + v[y][x+1] + v[y][x-1] + rho[y][x] * delta * delta / eps);
+                v[y][x] = (1 - omega) * v[y][x] + 
+                    (omega / 4.0) * (v[y+1][x] + v[y-1][x] + v[y][x+1] + v[y][x-1] + rho[y][x] * delta * delta / eps);
 
         // check of covergence
         s_new = stopping_criterion(v, rho, N, delta);
-        double delta_s = fabs(s_new - s_old) / fabs(s_old);
+        double delta_s = fabs((s_new - s_old) / s_old);
         save_SOR_iterations(dirname, k, s_new, delta_s);
         if (delta_s < TOL && k > 1) 
             break;
@@ -122,12 +137,12 @@ void SOR(
 int main() {
     SOR(1.5, 1.0, -1.0, 1.0, -1.0, 0.0, false, true, "./data/initial_run");
     SOR(1.5, 1.0, -1.0, 1.0, -1.0, 0.0, true, true, "./data/initial_run_with_boundaries");
-    // double omegas[] = {1.0, 1.3, 1.6, 1.9};
-    // for (double omega : omegas) {
-    //     std::string dirname = "./data/omega_" + std::to_string(omega);
-    //     SOR(omega, 1.0, -1.0, 1.0, -1.0, 0.0, true, true, dirname);
-    // }
-    // SOR(1.5, 0.0, 0.0, 0.0, 0.0, 1.0, false, true, "./data/homogeneous_bc");
-    // SOR(1.5, 1.0, -1.0, 1.0, -1.0, 1.0, false, true, "./data/nohomogeneous_bc");
+    double omegas[] = {1.0, 1.3, 1.6, 1.9};
+    for (double omega : omegas) {
+        std::string dirname = "./data/omega_" + std::to_string(omega);
+        SOR(omega, 1.0, -1.0, 1.0, -1.0, 0.0, true, true, dirname);
+    }
+    SOR(1.5, 0.0, 0.0, 0.0, 0.0, 1.0, false, true, "./data/homogeneous_bc");
+    SOR(1.5, 1.0, -1.0, 1.0, -1.0, 1.0, false, true, "./data/nohomogeneous_bc");
     return 0;
 }
