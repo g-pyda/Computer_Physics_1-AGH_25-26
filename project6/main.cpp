@@ -81,7 +81,7 @@ void CN_algorithm(
 
                 R[i][j] = Temp[i][j] 
                     + D*delta_t*T_comp/(2*delta_N*delta_N) 
-                    + 0.5*delta_t*S_temp(i, j, delta_N, S_x_min, S_x_max, S_y_min, S_y_max, S_max);
+                    + 0.5*delta_t*omega*S_temp(i, j, delta_N, S_x_min, S_x_max, S_y_min, S_y_max, S_max);
             }
         }
 
@@ -89,9 +89,20 @@ void CN_algorithm(
         omega_old = omega;
 
         // changing the heater state (if necessary) 
-        if (heater_switch){
-            if (Temp[int(x_sensor/delta_N)][int(y_sensor/delta_N)] < Temp_low) omega = 1;
-            else if (Temp[int(x_sensor/delta_N)][int(y_sensor/delta_N)] > Temp_high) omega = 0;
+        if (heater_switch == true){
+            //std::cout << "Current Temp at sensor: " << Temp[int(x_sensor/delta_N)][int(y_sensor/delta_N)] << " K ";
+            if (Temp[int(x_sensor/delta_N)][int(y_sensor/delta_N)] < Temp_low) {
+                omega = 1;
+                //std::cout << "Heater ON at time " << t << " s\n";
+            }
+             
+            else if (Temp[int(x_sensor/delta_N)][int(y_sensor/delta_N)] > Temp_high) {
+                omega = 0;
+                //std::cout << "Heater OFF at time " << t << " s\n";
+            }
+            else {
+                //std::cout << "Heater state unchanged at time " << t << " s\n";
+            }
         }
         
         // Gauss-Seidel relaxation
@@ -101,7 +112,7 @@ void CN_algorithm(
                 for (int j = 1; j < N - 1; j++) {
                     Temp[i][j] = ((0.5*D*delta_t/(delta_N*delta_N))*
                         (Temp[i - 1][j] + Temp[i + 1][j] + Temp[i][j - 1] + Temp[i][j + 1]) 
-                        + R[i][j] + 0.5*S_temp(i, j, delta_N, S_x_min, S_x_max, S_y_min, S_y_max, S_max))
+                        + R[i][j] + 0.5*delta_t*S_temp(i, j, delta_N, S_x_min, S_x_max, S_y_min, S_y_max, S_max))
                         / (1 + 2*D*delta_t/(delta_N*delta_N));
                 }
             }
@@ -109,7 +120,17 @@ void CN_algorithm(
             for (int i = 0; i < N - 1; i++) {
                 Temp[0][i] = (h*delta_N*Temp_out + D*Temp[1][i])/(h*delta_N + D);       // west boundary
                 Temp[i][N-1] = (h*delta_N*Temp_out + D*Temp[i][N-2])/(h*delta_N + D);   // north boundary
-                Temp[N-1][i] = (h*delta_N*Temp_out + D*Temp[N-2][i])/(h*delta_N + D);   // east boundary
+                // East boundary (x = L) - Contains the Window
+                double y_curr = i * delta_N;
+                double current_h = h; // Default to wall coefficient
+
+                // Check if we are within the window coordinates
+                if (y_curr >= y_window_min && y_curr <= y_window_max) {
+                    current_h = h_omega; // Use window coefficient
+                }
+            
+                // Use current_h instead of h
+                Temp[N-1][i] = (current_h*delta_N*Temp_out + D*Temp[N-2][i])/(current_h*delta_N + D);  
                 Temp[i][0] = (h*delta_N*Temp_out + D*Temp[i][1])/(h*delta_N + D);       // south boundary
             }
 
@@ -131,7 +152,7 @@ void CN_algorithm(
 
                     double L = Temp[i][j] 
                         - 0.5*D*delta_t*T_comp/(delta_N*delta_N)
-                        - 0.5*delta_t*S_temp(i, j, delta_N, S_x_min, S_x_max, S_y_min, S_y_max, S_max);
+                        - 0.5*delta_t*omega*S_temp(i, j, delta_N, S_x_min, S_x_max, S_y_min, S_y_max, S_max);
                     c += std::pow(L - R[i][j], 2)*delta_N*delta_N;
                 }
             }
@@ -145,7 +166,7 @@ void CN_algorithm(
         double E_lost = 0.0;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                E_supplied += S_temp(i, j, delta_N, S_x_min, S_x_max, S_y_min, S_y_max, S_max);
+                E_supplied += omega*S_temp(i, j, delta_N, S_x_min, S_x_max, S_y_min, S_y_max, S_max);
             }
             if (i*delta_N >= y_window_min && i*delta_N <= y_window_max) {
                 E_lost += (Temp[N-1][i] - Temp_out);
@@ -161,10 +182,10 @@ void CN_algorithm(
         file_Temp << t << " "  << Temp[int(x_sensor/delta_N)][int(y_sensor/delta_N)] << " " << E_supplied << " " << E_lost << "\n";
         
         switch (int(t)) {
-            case 10:
-            case 100:
-            case 1000:
-            case 10000:
+            case 2500:
+            case 3000:
+            case 3500:
+            case 4000:
                 {
                     std::ofstream file_tempDist;
                     file_tempDist.open(dirname + "/tempDist_" + std::to_string(int(t)) + ".dat");
@@ -191,22 +212,22 @@ void CN_algorithm(
 }
 
 int main() {
-    // task 1
-    CN_algorithm(0.0, 0.0, 1e4, 1, "./data/1", false);
+    // // task 1
+    // CN_algorithm(0.0, 0.0, 1e4, 1, "./data/1", true);
 
-    // task 2
-    CN_algorithm(0.002, 0.002, 1e4, 1, "./data/2", false);
+    // // task 2
+    // CN_algorithm(0.002, 0.002, 1e4, 1, "./data/2", true);
 
-    // task 3
-    CN_algorithm(0.002, 0.01, 1e4, 1, "./data/3", false);
+    // // task 3
+    // CN_algorithm(0.002, 0.03, 1e4, 1, "./data/3", true);
     
     // task 4
-    CN_algorithm(0.002, 0.01, 298, 1, "./data/4", false);
+    CN_algorithm(0.002, 0.03, 298, 1, "./data/4", true);
 
     // task 5
-    CN_algorithm(0.0, 1.0, 298, 1, "./data/5", false);
+    CN_algorithm(0.0, 1.0, 298, 1, "./data/5", true);
     
     // task 6
-    CN_algorithm(0.0, 1.0, 1e4, 1, "./data/6", false);
+    CN_algorithm(0.0, 1.0, 1e4, 1, "./data/6", true);
     return 0;
 }

@@ -13,7 +13,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/1/tempDist_10.dat" u 1:2:3 with image
 
@@ -34,7 +34,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/1/tempDist_100.dat" u 1:2:3 with image
 
@@ -55,7 +55,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/1/tempDist_1000.dat" u 1:2:3 with image
 
@@ -76,7 +76,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/1/tempDist_10000.dat" u 1:2:3 with image
 
@@ -113,7 +113,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/2/tempDist_10.dat" u 1:2:3 with image
 
@@ -134,7 +134,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/2/tempDist_100.dat" u 1:2:3 with image
 
@@ -155,7 +155,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/2/tempDist_1000.dat" u 1:2:3 with image
 
@@ -176,7 +176,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/2/tempDist_10000.dat" u 1:2:3 with image
 
@@ -214,7 +214,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/3/tempDist_10.dat" u 1:2:3 with image
 
@@ -235,7 +235,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/3/tempDist_100.dat" u 1:2:3 with image
 
@@ -256,7 +256,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/3/tempDist_1000.dat" u 1:2:3 with image
 
@@ -277,7 +277,7 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
 plot "./data/3/tempDist_10000.dat" u 1:2:3 with image
 
@@ -304,7 +304,7 @@ set out
 # ------------------------------------------------------------4
 
 set term pngcairo size 600,500
-set output './plots/4/T10.png'
+set output './plots/4/T2500.png'
 
 set view map
 set pm3d map
@@ -316,16 +316,16 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
-plot "./data/4/tempDist_10.dat" u 1:2:3 with image
+plot "./data/4/tempDist_2500.dat" u 1:2:3 with image
 
 set out
 
 # -----------------------------------------------
 
 set term pngcairo size 600,500
-set output './plots/4/T100.png'
+set output './plots/4/T3000.png'
 
 set view map
 set pm3d map
@@ -337,16 +337,16 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
-plot "./data/4/tempDist_100.dat" u 1:2:3 with image
+plot "./data/4/tempDist_3000.dat" u 1:2:3 with image
 
 set out
 
 # -----------------------------------------------
 
 set term pngcairo size 600,500
-set output './plots/4/T1000.png'
+set output './plots/4/T3500.png'
 
 set view map
 set pm3d map
@@ -358,16 +358,16 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
-plot "./data/4/tempDist_1000.dat" u 1:2:3 with image
+plot "./data/4/tempDist_3500.dat" u 1:2:3 with image
 
 set out
 
 # -----------------------------------------------
 
 set term pngcairo size 600,500
-set output './plots/4/T10000.png'
+set output './plots/4/T4000.png'
 
 set view map
 set pm3d map
@@ -379,9 +379,9 @@ set ylabel "y"
 set xrange [0:10]
 set yrange [0:10]
     
-set palette defined (0 "blue", 0.5 "white", 1 "red")
+set palette defined (0 "light-blue", 0.25 "green", 0.5 "yellow", 0.75 "orange", 1 "red")
 
-plot "./data/4/tempDist_10000.dat" u 1:2:3 with image
+plot "./data/4/tempDist_4000.dat" u 1:2:3 with image
 
 set out
 
