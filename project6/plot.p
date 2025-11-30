@@ -1,0 +1,398 @@
+# ------------------------------------------------------------1
+
+set term pngcairo size 600,500
+set output './plots/1/T10.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/1/tempDist_10.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/1/T100.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/1/tempDist_100.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/1/T1000.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/1/tempDist_1000.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/1/T10000.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/1/tempDist_10000.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term png size 600,600
+set out "plots/1/T_evol.png"
+
+unset xrange
+unset yrange
+
+plot "./data/1/tempDist.dat" u 1:2 w l title "T(t)"
+
+set out
+
+
+
+
+
+# ------------------------------------------------------------2
+
+set term pngcairo size 600,500
+set output './plots/2/T10.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/2/tempDist_10.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/2/T100.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/2/tempDist_100.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/2/T1000.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/2/tempDist_1000.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/2/T10000.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/2/tempDist_10000.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term png size 600,600
+set out "plots/2/T_evol.png"
+
+unset xrange
+unset yrange
+
+plot "./data/2/tempDist.dat" u 1:2 w l title "T(t)"
+
+set out
+
+
+
+
+
+
+# ------------------------------------------------------------3
+
+set term pngcairo size 600,500
+set output './plots/3/T10.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/3/tempDist_10.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/3/T100.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/3/tempDist_100.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/3/T1000.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/3/tempDist_1000.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/3/T10000.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/3/tempDist_10000.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term png size 600,600
+set out "plots/3/T_evol.png"
+
+unset xrange
+unset yrange
+
+plot "./data/3/tempDist.dat" u 1:2 w l title "T(t)"
+
+set out
+
+
+
+
+
+
+
+# ------------------------------------------------------------4
+
+set term pngcairo size 600,500
+set output './plots/4/T10.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/4/tempDist_10.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/4/T100.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/4/tempDist_100.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/4/T1000.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/4/tempDist_1000.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term pngcairo size 600,500
+set output './plots/4/T10000.png'
+
+set view map
+set pm3d map
+set pm3d interpolate 2,2     
+
+set xlabel "x"
+set ylabel "y"
+
+set xrange [0:10]
+set yrange [0:10]
+    
+set palette defined (0 "blue", 0.5 "white", 1 "red")
+
+plot "./data/4/tempDist_10000.dat" u 1:2:3 with image
+
+set out
+
+# -----------------------------------------------
+
+set term png size 600,600
+set out "plots/4/T_evol.png"
+
+unset xrange
+unset yrange
+
+plot "./data/4/tempDist.dat" u 1:2 w l title "T(t)"
+
+set out
