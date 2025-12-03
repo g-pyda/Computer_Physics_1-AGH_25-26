@@ -84,7 +84,7 @@ set out
 
 # -----------------------------------------------
 
-set term png size 600,600
+set term png size 600,500
 set out "plots/1/T_evol.png"
 
 unset xrange
@@ -184,7 +184,7 @@ set out
 
 # -----------------------------------------------
 
-set term png size 600,600
+set term png size 600,500
 set out "plots/2/T_evol.png"
 
 unset xrange
@@ -285,7 +285,7 @@ set out
 
 # -----------------------------------------------
 
-set term png size 600,600
+set term png size 600,500
 set out "plots/3/T_evol.png"
 
 unset xrange
@@ -387,12 +387,47 @@ set out
 
 # -----------------------------------------------
 
-set term png size 600,600
+set term png size 600,500
 set out "plots/4/T_evol.png"
 
 unset xrange
 unset yrange
 
 plot "./data/4/tempDist.dat" u 1:2 w l title "T(t)"
+
+set out
+
+
+# -------------------------------------------------------------------5
+
+set terminal pngcairo size 1200,800 enhanced
+set output "./plots/5/energy.png"
+
+set xlabel "time"
+set ylabel "Energy"
+set yrange [0:50]
+
+set grid
+set key top left
+
+plot "./data/5/tempDist.dat" using 1:3 with lines lw 2 title "E_{supplied}", \
+     "./data/5/tempDist.dat" using 1:4 with lines lw 2 title "E_{lost}"
+
+set out
+
+# ---------------------------------------------------------------------6
+
+set terminal pngcairo size 1200,800 enhanced
+set output "./plots/6/energy.png"
+
+set xlabel "time"
+set ylabel "Energy"
+set yrange [0:50]
+
+set grid
+set key top left
+
+plot "./data/6/tempDist.dat" using 1:3 with lines lw 2 title "E_{supplied}", \
+     "./data/6/tempDist.dat" using 1:4 with lines lw 2 title "E_{lost}"
 
 set out
